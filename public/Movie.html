@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie App</title>
+    
+   
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+<body>
+
+    <div class="container">
+        <div class="row">
+            <!-- Add Movie Card -->
+            <div class="col-sm-3 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Add Movie</h5>
+                        <form action="/"   method="post">
+                            <div class="mb-3">
+                                <label for="title">Title</label>
+                                <input type="text" class="form-control form-control-sm" id="title" name="title">
+                            </div>
+                            <div class="mb-3">
+                                <label for="director">Director</label>
+                                <input type="text" class="form-control form-control-sm" id="director" name="director">
+                            </div>
+                            <div class="mb-3">
+                                <label for="releaseYear">Release Year</label>
+                                <input type="text" class="form-control form-control-sm" id="releaseYear" name="releaseYear">
+                            </div>
+                            <div class="mb-3">
+                                <label for="genre">Genre</label>
+                                <input type="text" class="form-control form-control-sm" id="genre" name="genre">
+                            </div>
+                            <div class="mb-3">
+                                <label for="rate">Rate</label>
+                                <input type="text" class="form-control form-control-sm" id="rate" name="rate">
+                            </div>
+                            <button type="submit" class="btn btn-primary">Add Movie</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Update Movie Card -->
+            <div class="col-sm-3 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Update Movie by ID</h5>
+                        <form id="updateMovieForm"   action ="/" method="put">
+                            <div class="mb-3">
+                                <label for="movieId">Movie ID</label>
+                                <input type="text" class="form-control form-control-sm" id="movieId" name="movieId">
+                            </div>
+                            <div class="mb-3">
+                                <label for="Title">Title</label>
+                                <input type="text" class="form-control form-control-sm" id="Title" name="Title">
+                            </div>
+                            <div class="mb-3">
+                                <label for="Director">Director</label>
+                                <input type="text" class="form-control form-control-sm" id="Director" name="Director">
+                            </div>
+                            <div class="mb-3">
+                                <label for="ReleaseYear">Release Year</label>
+                                <input type="text" class="form-control form-control-sm" id="ReleaseYear" name="ReleaseYear">
+                            </div>
+                            <div class="mb-3">
+                                <label for="genre">Genre</label>
+                                <input type="text" class="form-control form-control-sm" id="Genre" name="Genre">
+                            </div>
+                            <div class="mb-3">
+                                <label for="Rate">Rate</label>
+                                <input type="text" class="form-control form-control-sm" id="Rate" name="Rate">
+                            </div>
+                            <button type="submit" class="btn btn-primary">Update Movie</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            
+            
+
+            <!-- Delete Movie Card -->
+            <div class="col-sm-3 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Delete Movie by ID</h5>
+                        <form id="deleteMovieForm"> 
+                            <div class="mb-3">
+                                <label for="deleteMovieId">Movie ID</label>
+                                <input type="text" class="form-control form-control-sm" id="deleteMovieId" name="deleteMovieId">
+                            </div>
+                            <button type="submit" class="btn btn-danger">Delete Movie</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            
+
+           
+            <!-- Get Movie Card -->
+            <div class="col-sm-3 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">List All Movies</h5>
+                        
+                        
+                        <div class="movie-list-container" style="max-height: 300px; overflow-y: auto;">
+                            <div id="movieList">
+                                <!-- Movie list content will go here -->
+                            </div>
+                        </div>
+            
+                        <form id="getMoviesForm" action="/" method="get">
+                            <button type="submit" class="btn btn-primary">Get Movies</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            
+            
+</div>
+
+
+
+
+
+    <script>
+
+
+document.querySelector('form[action="/"]').addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const formData = new FormData(e.target);
+    const data = {};
+    formData.forEach((value, key) => {
+        data[key] = value;
+    });
+
+    try {
+        const response = await fetch("/movies", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(data),
+        });
+
+        if (response.status === 201) {
+            alert("Movie added successfully");
+
+            window.location.href = '/Movie.html';
+
+     
+
+        } else {
+            alert("Failed to add movie");
+        }
+    } catch (error) {
+        console.error("Error:", error);
+        alert("An error occurred");
+    }
+});
+
+
+
+
+
+    </script>
+
+
+
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const movieList = document.getElementById('movieList');
+  const getMoviesForm = document.getElementById('getMoviesForm');
+
+  getMoviesForm.addEventListener('submit', (event) => {
+    event.preventDefault(); 
+
+
+    fetch('/movies')
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Failed to retrieve movies.');
+        }
+        return response.json();
+      })
+      .then((data) => {
+        
+        movieList.innerHTML = '';
+
+        
+        const movieUl = document.createElement('ul');
+
+       
+        data.forEach((movie) => {
+          const movieLi = document.createElement('li');
+          movieLi.innerHTML = `
+            <strong>ID:</strong> ${movie._id}<br>
+            <strong>Title:</strong> ${movie.title}<br>
+            <strong>Director:</strong> ${movie.director}<br>
+            <strong>Release Year:</strong> ${movie.releaseYear}<br>
+            <strong>Genre:</strong> ${movie.genre}<br>
+            <strong>Rate:</strong> ${movie.rate}
+          `;
+
+        
+          movieUl.appendChild(movieLi);
+        });
+
+    
+        movieList.appendChild(movieUl);
+      })
+      .catch((error) => {
+        console.error(error);
+        movieList.textContent = 'Failed to retrieve movies.';
+      });
+  });
+});
+
+</script>
+
+
+
+
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const updateMovieForm = document.getElementById('updateMovieForm');
+
+        updateMovieForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+
+            const movieId = document.getElementById('movieId').value;
+            const title = document.getElementById("Title").value;
+
+          
+
+
+            const director = document.getElementById('Director').value;
+            const releaseYear = document.getElementById('ReleaseYear').value;
+            const genre = document.getElementById('Genre').value;
+            const rate = document.getElementById('Rate').value;
+
+          
+            const updateData = {
+                title,
+                director,
+                releaseYear,
+                genre,
+                rate
+            };
+
+            console.log( director);
+
+           
+
+
+            try {
+                const response = await fetch(`/movies/${movieId}`, {
+                    method: 'PUT', 
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+
+                
+                    body: JSON.stringify(updateData)
+                });
+
+                if (response.status === 200) {
+                    alert('Movie updated successfully');
+                    
+                    window.location.href = '/Movie.html';
+                    
+                } else {
+                    alert('Failed to update movie');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An error occurred');
+            }
+        });
+    });
+</script>
+
+
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const deleteMovieForm = document.getElementById('deleteMovieForm'); 
+
+        deleteMovieForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            const movieId = document.getElementById('deleteMovieId').value;
+
+            try {
+                const response = await fetch(`/movies/${movieId}`, {
+                    method: 'DELETE',
+                });
+
+                if (response.status === 200) {
+                    alert('Movie deleted successfully');
+                   
+                    window.location.reload(); 
+                } else if (response.status === 404) {
+                    alert('Movie not found');
+                } else {
+                    alert('Failed to delete movie');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An error occurred');
+            }
+        });
+    });
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+</body>
+</html>
